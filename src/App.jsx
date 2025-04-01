@@ -62,8 +62,8 @@ const App = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      // Enviar dados para o servidor
-      const response = await axios.post('http://localhost:3000/api/submit-form', data);
+      // Usar URL relativa em vez de hardcoded localhost
+      const response = await axios.post('/api/submit-form', data);
       
       console.log('Dados enviados com sucesso:', response.data);
       setSubmitted(true);
