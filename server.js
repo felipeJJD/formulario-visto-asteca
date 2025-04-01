@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,7 +15,16 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'dist')));
+
+// Verificar se o diretório dist existe
+const distPath = path.join(__dirname, 'dist');
+if (fs.existsSync(distPath)) {
+  // Servir arquivos estáticos de dist
+  console.log('Servindo arquivos estáticos de: ' + distPath);
+  app.use(express.static(distPath));
+} else {
+  console.log('AVISO: Diretório dist não encontrado em ' + distPath);
+}
 
 // Configuração do banco de dados
 const pool = new Pool({
@@ -26,13 +36,8 @@ const pool = new Pool({
 });
 
 // Rota de healthcheck
-app.get('/', (req, res) => {
-  res.status(200).json({ status: 'ok', message: 'Servidor está funcionando!' });
-});
-
-// Rota de healthcheck específica
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+  res.status(200).json({ status: 'ok', message: 'Servidor está funcionando!' });
 });
 
 // Função para formatar data no formato YYYY-MM-DD
@@ -141,9 +146,25 @@ app.post('/api/submit-form', async (req, res) => {
   }
 });
 
+// Rota catch-all para SPA 
+app.get('*', (req, res) => {
+  // Verificar se o index.html existe
+  const indexPath = path.join(__dirname, 'dist', 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).json({ error: 'Arquivo index.html não encontrado' });
+  }
+});
+
 // Iniciar o servidor
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
+  console.log('Variáveis de ambiente:');
+  console.log(`DB_HOST: ${process.env.DB_HOST || 'junction.proxy.rlwy.net'}`);
+  console.log(`DB_PORT: ${process.env.DB_PORT || '45593'}`);
+  console.log(`DB_NAME: ${process.env.DB_NAME || 'railway'}`);
+  console.log(`DB_USER: ${process.env.DB_USER || 'postgres'}`);
   
   // Tentar conectar ao banco após o servidor estar rodando
   pool.connect((err, client, release) => {
@@ -154,4 +175,4 @@ app.listen(PORT, () => {
       release();
     }
   });
-}); 
+});

@@ -1,9 +1,14 @@
 [build]
 builder = "NIXPACKS"
+nixpacksAppType = "node"
 buildCommand = "npm run build"
+skipBuild = true  # Pular o processo de build e usar arquivos compilados localmente
 
 [deploy]
-startCommand = "npm start"
+startCommand = "node server.js"
 healthcheckPath = "/health"
 healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
+
+[variables]
+NODE_ENV = "production"

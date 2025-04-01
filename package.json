@@ -8,11 +8,12 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "prebuild": "echo 'Preparando build...' && ls -la",
+    "build": "vite build --emptyOutDir",
+    "postbuild": "echo 'Build concluído!' && ls -la dist",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start": "node server.js",
-    "postinstall": "npm run build"
+    "start": "node server.js"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
