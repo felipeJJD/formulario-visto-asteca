@@ -1268,7 +1268,7 @@ const App = () => {
                 }
               }}
             >
-              FORMULÁRIO | DESTINO VISTO
+              FORMULÁRIO | ASTECA VISTO
             </Typography>
             <Typography variant="subtitle1" align="center" color="text.secondary" sx={{ mt: 3 }}>
               Preencha todas as informações com atenção e verifique antes de enviar.
